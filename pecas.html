@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peças - JE Direções e Equipamentos Hidráulicos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        /* --- CSS GERAL (Mantendo a identidade do site) --- */
+        :root {
+            --azul-escuro: #0a1f35;
+            --laranja-acao: #f59e0b;
+            --laranja-hover: #d97706;
+            --branco: #ffffff;
+            --texto: #333333;
+            --cinza-fundo: #f4f4f4;
+            --verde-zap: #25d366;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; color: var(--texto); line-height: 1.6; background-color: var(--cinza-fundo); }
+        a { text-decoration: none; }
+        ul { list-style: none; }
+
+        /* HEADER */
+        header { background-color: var(--branco); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; width: 100%; top: 0; z-index: 1000; height: 90px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; height: 100%; display: flex; justify-content: space-between; align-items: center; }
+        .logo img { height: 90px; width: auto; }
+        
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links a { color: var(--azul-escuro); font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--laranja-acao); }
+        
+        .btn-orcamento { background-color: var(--laranja-acao); color: var(--branco); padding: 10px 20px; border-radius: 5px; font-weight: bold; display: flex; align-items: center; gap: 8px; font-size: 14px; text-transform: uppercase; }
+        .btn-orcamento:hover { background-color: var(--laranja-hover); }
+
+        /* --- ESTILO DA GRADE DE PEÇAS (CORREÇÃO AQUI) --- */
+        .page-header {
+            margin-top: 90px;
+            background: var(--azul-escuro);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+        .page-header h1 { font-size: 32px; text-transform: uppercase; }
+
+        .section-pecas {
+            padding: 60px 0;
+        }
+
+        /* A MÁGICA DO GRID ACONTECE AQUI */
+        .grid-pecas {
+            display: grid;
+            /* Cria colunas automáticas que tenham no mínimo 250px e dividem o espaço restante igualmente */
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 30px; /* Espaço entre os cartões */
+            width: 100%;
+        }
+
+        .card-peca {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column; /* Garante que o botão fique embaixo */
+            transition: transform 0.3s;
+            height: 100%; /* Força todos a terem a mesma altura na linha */
+        }
+
+        .card-peca:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-img-box {
+            height: 200px;
+            background-color: #fff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-img-box img {
+            max-height: 100%;
+            max-width: 100%;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .card-info {
+            padding: 0;
+            flex-grow: 1; /* Faz esta parte ocupar o espaço disponível */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            background-color: var(--azul-escuro);
+            color: white;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-align: center;
+            min-height: 55px; /* Altura mínima para títulos de 2 linhas não quebrarem o layout */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-cotar {
+            display: block;
+            background-color: var(--verde-zap);
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .btn-cotar:hover {
+            background-color: #1ebc57;
+        }
+
+        /* Footer */
+        footer { background-color: #05101c; color: #ccc; padding: 40px 0; text-align: center; margin-top: auto; }
+
+        /* Botão Flutuante */
+        .float-btn {
+            position: fixed; bottom: 30px; right: 30px; background: var(--verde-zap); color: white;
+            padding: 15px 25px; border-radius: 50px; font-weight: bold; display: flex; align-items: center; gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; transition: 0.3s;
+        }
+        .float-btn:hover { transform: scale(1.05); }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .grid-pecas { grid-template-columns: 1fr 1fr; gap: 15px; } /* 2 colunas no celular */
+        }
+        @media (max-width: 480px) {
+            .grid-pecas { grid-template-columns: 1fr; } /* 1 coluna em celulares muito pequenos */
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html"><img src="arquivos/logo.png" alt="JE Direções"></a>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="index.html#sobre">A Empresa</a></li>
+                    <li><a href="servicos.html">Serviços</a></li>
+                    <li><a href="pecas.html" class="active">Peças</a></li>
+                    <li><a href="index.html#contato">Localização</a></li>
+                </ul>
+            </nav>
+            <a href="https://wa.me/554988276102?text=Olá, Vim pelo Site e gostaria de um orçamento." class="btn-orcamento" target="_blank">
+                <i class="fab fa-whatsapp"></i> Orçamento
+            </a>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Catálogo de Peças</h1>
+            <p>Peças originais e de reposição para Linha Pesada e Sistemas Hyva</p>
+        </div>
+    </section>
+
+    <section class="section-pecas">
+        <div class="container">
+            <div class="grid-pecas">
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/kithidr.png" alt="Kit Hidraulico"></div>
+                    <div class="card-info">
+                        <div class="card-title">Kit Hidráulico</div>
+                        <a href="https://wa.me/554988276102?text=Orçamento Kit Hidraulico" class="btn-cotar" target="_blank">Cotar</a>
+                    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/tomadaforca.png" alt="Tomada de Força"></div>
+                    <div class="card-info">
+                        <div class="card-title">Tomada de Força</div>
+                        <a href="https://wa.me/554988276102?text=Orçamento Tomada de Força" class="btn-cotar" target="_blank">Cotar</a>
+                    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/bombahidr.png" alt="Bomba Hidráulica"></div>
+                    <div class="card-info">
+                        <div class="card-title">Bomba Hidráulica</div>
+                        <a href="https://wa.me/554988276102?text=Orçamento Bomba Hidráulica" class="btn-cotar" target="_blank">Cotar</a>
+                    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cilindrofee.png" alt="Cilindro FEE"></div>
+                    <div class="card-info">
+			<div class="card-title">FEE - Cilindro Frontal</div>
+			<a href="https://wa.me/554988276102?text=Orçamento Cilindro FEE" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cilindrofse.png" alt="Cilindro FSE"></div>
+                    <div class="card-info">
+			<div class="card-title">FSE - Cilindro Frontal</div>
+			<a href="https://wa.me/554988276102?text=Orçamento Cilindro FSE" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cilindrofc.png" alt="Cilindro FC"></div>
+                    <div class="card-info">
+			<div class="card-title">FC - Cilindro Frontal</div>
+			<a href="https://wa.me/554988276102?text=Orçamento Cilindro FC" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cilindrofe.png" alt="Cilindro FE"></div>
+                    <div class="card-info">
+			<div class="card-title">FE - Cilindro Frontal</div>
+			<a href="https://wa.me/554988276102?text=Orçamento Cilindro FE" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/comando.png" alt="Comando"></div>
+                    <div class="card-info">
+			<div class="card-title">Comando Pneumático</div>
+			<a href="https://wa.me/554988276102?text=Orçamento Comando" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvulafimdecurso.png" alt="Valvula Fim Curso"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula Fim de Curso Pneumática</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula Fim Curso" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/suporte.png" alt="Suporte"></div>
+                    <div class="card-info">
+			<div class="card-title">Suporte Fixação de Kit Hidráulico</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Suporte" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/mangueira.png" alt="Mangueira"></div>
+                    <div class="card-info">
+			<div class="card-title">Mangueiras Kit E-line</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Mangueira" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/acionamento.png" alt="Acionamento"></div>
+                    <div class="card-info">
+			<div class="card-title">Acionamento Pneumático</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Acionamento" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/suportecomando.png" alt="Suporte Comando"></div>
+                    <div class="card-info">
+			<div class="card-title">Suporte Comando Pneumático</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Suporte Comando" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/tampafiltro.png" alt="Tampa Filtro"></div>
+                    <div class="card-info">
+			<div class="card-title">Tampa do Filtro de Ar</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Tampa Filtro" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/filtro150l.png" alt="Filtro 150L"></div>
+                    <div class="card-info">
+			<div class="card-title">Filtro Retorno 150L/min</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Filtro 150L" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/bocal.png" alt="Bocal"></div>
+                    <div class="card-info">
+			<div class="card-title">Bocal de Abastecimento</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Bocal" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/prolongador.png" alt="Prolongador"></div>
+                    <div class="card-info">
+			<div class="card-title">Prolongador Reservatório</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Prolongador" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvulaminerio.png" alt="Valvula Minerio"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula Minério 190 BAR</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula Minerio" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvulabasculante.png" alt="Valvula Basculante"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula Basculante</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula Basculante" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/filtrosbloco.png" alt="Filtro S Bloco"></div>
+                    <div class="card-info">
+			<div class="card-title">Filtro Retorno S/ Bloco</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Filtro S Bloco" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/kitreparo.png" alt="Kit Reparo"></div>
+                    <div class="card-info">
+			<div class="card-title">Kit Reparo Válvula</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Kit Reparo" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/tamparetorno.png" alt="Tampa Retorno"></div>
+                    <div class="card-info">
+			<div class="card-title">Tampa Filtro de Retorno</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Tampa Retorno" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/elemento350.png" alt="Elemento 350"></div>
+                    <div class="card-info">
+			<div class="card-title">Elemento Filtro 350L</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Elemento 350" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/elemento150.png" alt="Elemento 150"></div>
+                    <div class="card-info">
+			<div class="card-title">Elemento Filtro 150L</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Elemento 350" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvularodotrem.png" alt="Valvula Rodotrem"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula Rodotrem</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula Rodotrem" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/filtroar.png" alt="Filtro Ar"></div>
+                    <div class="card-info">
+			<div class="card-title">Elemento Filtro Ar</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Filtro Ar" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/blocosuporte.png" alt="Bloco Suporte"></div>
+                    <div class="card-info">
+			<div class="card-title">Bloco Suporte Válvula</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Bloco Suporte" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/filtro350.png" alt="Filtro 350"></div>
+                    <div class="card-info">
+			<div class="card-title">Filtro Retorno 350L</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Filtro 350" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/chaveseletora.png" alt="Chave Seletora"></div>
+                    <div class="card-info">
+			<div class="card-title">Chave Seletora</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Chave Seletora" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvulaht1150.png" alt="Valvula HT1150"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula HT-1150</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula HT1150" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/valvulaht1220.png" alt="Valvula HT1220"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula HT-1220</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Valvula HT1220" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/fimcurso.png" alt="Fim Curso"></div>
+                    <div class="card-info">
+			<div class="card-title">Válvula Fim de Curso</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Fim Curso" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/kitaneis.png" alt="Kit Aneis"></div>
+                    <div class="card-info">
+			<div class="card-title">Kit Anéis Cilindro</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Kit Aneis" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/anelvedante.png" alt="Anel Vedante"></div>
+                    <div class="card-info">
+			<div class="card-title">Anel Vedante</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Anel Vedante" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/filtroretorno350.png" alt="Filtro 350"></div>
+                    <div class="card-info">
+			<div class="card-title">Filtro Retorno 350</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Filtro 350" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/visornivel.png" alt="Visor Nivel"></div>
+                    <div class="card-info">
+			<div class="card-title">Visor de Nível</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Visor Nivel" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/reservatorio.png" alt="Reservatorio"></div>
+                    <div class="card-info">
+			<div class="card-title">Reservatório de Óleo</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Reservatorio" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/elementofiltragem.png" alt="Elemento Filtragem"></div>
+                    <div class="card-info">
+			<div class="card-title">Elemento Filtragem</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Elemento Filtragem" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/suportecomando.png" alt="Suporte Comando"></div>
+                    <div class="card-info">
+			<div class="card-title">Suporte Comando 650H</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Suporte Comando" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cinta.png" alt="Cinta Aço"></div>
+                    <div class="card-info">
+			<div class="card-title">Cinta de Aço</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Cinta Aço" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+ <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/cilindropneumatico.png" alt="CILINDRO PNEUMATICO"></div>
+                    <div class="card-info">
+			<div class="card-title">Cilindro Pneumatico Simples</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Cilindro Pneumatico Simples" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+
+                <div class="card-peca">
+                    <div class="card-img-box"><img src="arquivos/comando80l.png" alt="Comando 80L"></div>
+                    <div class="card-info">
+			<div class="card-title">Comando Hidráulico para Basculante</div>
+			<a href="https://wa.me/554988276102?text=Orçamento de Comando Hidráulico para Basculante" class="btn-cotar" target="_blank">Cotar</a>
+		    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 JE Direções e Equipamentos Hidráulicos. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <a href="https://wa.me/554988276102?text=Olá, Vim pelo Site e gostaria de um orçamento." class="float-btn" target="_blank">
+        Solicite um Orçamento <i class="fab fa-whatsapp" style="font-size: 24px;"></i>
+    </a>
+
+</body>
+</html>
